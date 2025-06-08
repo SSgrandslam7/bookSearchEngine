@@ -4,10 +4,10 @@ import dotenv from 'dotenv';
 import { fileURLToPath } from 'url';
 import { ApolloServer } from '@apollo/server';
 import { expressMiddleware } from '@apollo/server/express4';
-import { typeDefs } from './src/schemas/typeDefs';
-import { resolvers } from './src/schemas/resolvers';
-import db from './src/config/connection';
-import { authenticateTokenGraphQL } from './src/services/auth';
+import { typeDefs } from './schemas/typeDefs';
+import { resolvers } from './schemas/resolvers';
+import db from './config/connection';
+import { authenticateTokenGraphQL } from './services/auth';
 
 dotenv.config();
 
