@@ -18,7 +18,7 @@ export const authenticateToken = (req: Request, res: Response, next: NextFunctio
 
     const secretKey = process.env.JWT_SECRET_KEY || '';
 
-    jwt.verify(token, secretKey, (err, user) => {
+    jwt.verify(token, secretKey, (err:any, user:any) => {
       if (err) {
         return res.sendStatus(403); // Forbidden
       }
@@ -36,4 +36,20 @@ export const signToken = (username: string, email: string, _id: unknown) => {
   const secretKey = process.env.JWT_SECRET_KEY || '';
 
   return jwt.sign(payload, secretKey, { expiresIn: '1h' });
+};
+
+export const authenticateTokenGraphQL = (req: Request) => {
+  const authHeader = req.headers.authorization || '';
+  const token = authHeader.split(' ').pop();
+
+  if (!token) return null;
+
+  try {
+    const secretKey = process.env.JWT_SECRET_KEY || '';
+    const decoded = jwt.verify(token, secretKey);
+    return decoded as JwtPayload;
+  } catch (err) {
+    console.error('GraphQL auth error:', err);
+    return null;
+  }
 };
