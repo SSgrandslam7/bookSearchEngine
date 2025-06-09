@@ -1,14 +1,6 @@
 import { gql } from 'graphql-tag';
 
-export const typeDefs = gql`
-  type User {
-    _id: ID!
-    username: String!
-    email: String!
-    bookCount: Int
-    savedBooks: [Book]
-  }
-
+const typeDefs = gql`
   type Book {
     bookId: String!
     authors: [String]
@@ -16,6 +8,19 @@ export const typeDefs = gql`
     title: String!
     image: String
     link: String
+  }
+
+  type User {
+    _id: ID
+    username: String!
+    email: String!
+    savedBooks: [Book]
+    bookCount: Int
+  }
+
+  type Auth {
+    token: ID!
+    user: User
   }
 
   input BookInput {
@@ -27,11 +32,6 @@ export const typeDefs = gql`
     link: String
   }
 
-  type Auth {
-    token: ID!
-    user: User
-  }
-
   type Query {
     me: User
   }
@@ -39,7 +39,9 @@ export const typeDefs = gql`
   type Mutation {
     login(email: String!, password: String!): Auth
     addUser(username: String!, email: String!, password: String!): Auth
-    saveBook(input: BookInput!): User
+    saveBook(book: BookInput!): User
     removeBook(bookId: String!): User
   }
 `;
+
+export { typeDefs };

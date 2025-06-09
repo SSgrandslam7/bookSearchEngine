@@ -1,21 +1,14 @@
 import './App.css';
 import { Outlet } from 'react-router-dom';
-import Navbar from './components/Navbar';
-
-import {
-  ApolloClient,
-  InMemoryCache,
-  ApolloProvider,
-  createHttpLink
-} from '@apollo/client';
+import { ApolloClient, InMemoryCache, ApolloProvider, createHttpLink } from '@apollo/client';
 import { setContext } from '@apollo/client/link/context';
 
-// Point to your GraphQL server
+import Navbar from './components/Navbar';
+
 const httpLink = createHttpLink({
-  uri: '/graphql', // Adjust if you're using a proxy or custom domain
+  uri: '/graphql',
 });
 
-// Attach JWT token to requests
 const authLink = setContext((_, { headers }) => {
   const token = localStorage.getItem('id_token');
   return {

@@ -1,23 +1,22 @@
 import express from 'express';
 import path from 'node:path';
-import dotenv from 'dotenv';
-import { fileURLToPath } from 'url';
 import { ApolloServer } from '@apollo/server';
 import { expressMiddleware } from '@apollo/server/express4';
-import { typeDefs } from './schemas/typeDefs';
-import { resolvers } from './schemas/resolvers';
-import db from './config/connection';
-import { authenticateTokenGraphQL } from './services/auth';
+import type { Request, Response } from 'express';
 
-dotenv.config();
+import connectDB from './config/connection.js';
+import { typeDefs } from './schemas/typeDefs.js';
+import { resolvers } from './schemas/resolvers.js';
+import { authenticateToken } from './services/auth.js';
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-
-const app = express();
 const PORT = process.env.PORT || 3001;
 
-// Apollo Server setup
+const startServer = async () => {
+  const app = express();
+
+  await connectDB();
+
+// Initialize Apollo Server
 const server = new ApolloServer({
   typeDefs,
   resolvers,
@@ -25,35 +24,30 @@ const server = new ApolloServer({
 
 await server.start();
 
-// Apollo middleware with context
-app.use(
-  '/graphql',
-  express.json(),
-  expressMiddleware(server, {
-    context: async ({ req }) => {
-      const user = await authenticateTokenGraphQL(req);
-      return { user };
-    },
-  })
-);
-
-// Express middleware
+// Middleware
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
-// Static assets in production
-if (process.env.NODE_ENV === 'production') {
-  app.use(express.static(path.join(__dirname, '../client/build')));
+app.use(
+  '/graphql',
+  expressMiddleware(server, {
+    context: authenticateToken,
+  })
+);
 
-  app.get('*', (_req, res) => {
-    res.sendFile(path.join(__dirname, '../client/build/index.html'));
+// Serve static files in production
+if (process.env.NODE_ENV === 'production') {
+  app.use(express.static(path.resolve('client/dist')));
+
+  app.get('*', (_req: Request, res: Response) => {
+    res.sendFile(path.resolve('client/dist/index.html'));
   });
 }
 
-// Connect DB and start server
-db.once('open', () => {
   app.listen(PORT, () => {
-    console.log(`🌍 Server running at http://localhost:${PORT}`);
-    console.log(`🔮 GraphQL at http://localhost:${PORT}/graphql`);
+    console.log(`Server is running on http://localhost:${PORT}`);
+    console.log(`GraphQL endpoint ready at http://localhost:${PORT}/graphql`);
   });
-});
+};
+
+startServer();
