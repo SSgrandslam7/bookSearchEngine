@@ -10,7 +10,7 @@ import SavedBooks from './pages/SavedBooks';
 
 // Set up HTTP connection to the GraphQL server
 const httpLink = createHttpLink({
-  uri: '/graphql',
+  uri: import.meta.env.VITE_API_URL + '/graphql',
 });
 
 // Set up authorization header with token for every request
