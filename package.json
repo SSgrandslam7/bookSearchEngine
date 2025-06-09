@@ -14,10 +14,13 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
+    "@types/bcrypt": "^5.0.2",
+    "@types/jsonwebtoken": "^9.0.9",
     "concurrently": "^8.2.0"
   },
   "dependencies": {
     "@apollo/client": "^3.13.8",
-    "graphql": "^16.11.0"
+    "graphql": "^16.11.0",
+    "graphql-tag": "^2.12.6"
   }
 }
