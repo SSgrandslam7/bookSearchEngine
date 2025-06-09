@@ -34,20 +34,29 @@ const SearchBooks = () => {
 
     try {
       const response = await fetch(`https://www.googleapis.com/books/v1/volumes?q=${searchInput}`);
-      const { items } = await response.json();
+      const data = await response.json();
 
-      const bookData = items.map((book: GoogleAPIBook) => ({
+      console.log('Google Books API response:', data);
+
+      if (!data.items || data.items.length === 0) {
+        console.warn('No books found for this search input.');
+        setSearchedBooks([]);
+        return;
+      }
+
+      const bookData = data.items.map((book: GoogleAPIBook) => ({
         bookId: book.id,
         authors: book.volumeInfo.authors || ['No author to display'],
         title: book.volumeInfo.title,
         description: book.volumeInfo.description,
         image: book.volumeInfo.imageLinks?.thumbnail || '',
+        link: book.volumeInfo.infoLink || ''
       }));
 
       setSearchedBooks(bookData);
       setSearchInput('');
     } catch (err) {
-      console.error(err);
+      console.error('Error fetching books:', err);
     }
   };
 

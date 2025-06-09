@@ -7,5 +7,6 @@ export interface GoogleAPIBook {
     imageLinks?: {
       thumbnail?: string;
     };
+    infoLink?: string;
   };
 }
