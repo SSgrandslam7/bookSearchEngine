@@ -59,7 +59,7 @@ const SearchBooks = () => {
     if (!token) return;
 
     try {
-      await saveBook({ variables: { input: bookToSave } });
+      await saveBook({ variables: { book: bookToSave } });
       setSavedBookIds([...savedBookIds, bookToSave.bookId]);
     } catch (err) {
       console.error(err);
