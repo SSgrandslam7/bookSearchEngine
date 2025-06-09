@@ -17,7 +17,8 @@ const SignupForm: React.FC<SignupFormProps> = ({ handleModalClose }) => {
     password: '',
   });
 
-  const [validated] = useState(false);
+  const [validated, setValidated] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [showAlert, setShowAlert] = useState(false);
 
   const [addUser] = useMutation(ADD_USER);
@@ -29,12 +30,14 @@ const SignupForm: React.FC<SignupFormProps> = ({ handleModalClose }) => {
 
   const handleFormSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+    setIsSubmitting(true);
 
     const form = event.currentTarget;
     if (form.checkValidity() === false) {
       event.preventDefault();
       event.stopPropagation();
     }
+    setValidated(true);
 
     try {
       const { data } = await addUser({
@@ -44,10 +47,11 @@ const SignupForm: React.FC<SignupFormProps> = ({ handleModalClose }) => {
       Auth.login(data.addUser.token);
       handleModalClose();
     } catch (err) {
-      console.error(err);
+      console.error('Signup error:', err);
       setShowAlert(true);
     }
 
+    setIsSubmitting(false);
     setUserFormData({
       username: '',
       email: '',
@@ -113,11 +117,8 @@ const SignupForm: React.FC<SignupFormProps> = ({ handleModalClose }) => {
 
       <Button
         disabled={
-          !(
-            userFormData.username &&
-            userFormData.email &&
-            userFormData.password
-          )
+          isSubmitting ||
+          !(userFormData.username && userFormData.email && userFormData.password)
         }
         type="submit"
         variant="success"

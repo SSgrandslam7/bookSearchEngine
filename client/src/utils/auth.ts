@@ -7,7 +7,13 @@ interface UserToken {
 
 class AuthService {
   getProfile() {
-    return jwtDecode(this.getToken() || '');
+    const token = this.getToken();
+    if (!token) return null;
+    try {
+      return jwtDecode<UserToken>(token);
+    } catch {
+      return null;
+    }
   }
 
   loggedIn() {
