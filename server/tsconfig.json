@@ -10,7 +10,8 @@
     "resolveJsonModule": true,
     "strict": true,
     "forceConsistentCasingInFileNames": true,
-    "skipLibCheck": true
+    "skipLibCheck": true,
+    "noEmit": false,
   },
   "include": ["src/**/*"]
 }
