@@ -1,8 +1,8 @@
-import User from '../models/User.js';
-import { signToken } from '../services/auth.js';
-import type { BookInput } from '../types/BookInput.js';
+import User from '../models/User';
+import { signToken } from '../services/auth';
+import type { BookInput } from '../types/BookInput';
 import { GraphQLError } from 'graphql';
-import type { IUser } from '../models/User.js';
+import type { IUser } from '../models/User';
 
 interface GraphQLContext {
   user?: IUser & { _id: string };
@@ -36,7 +36,7 @@ export const resolvers = {
           extensions: { code: 'BAD_USER_INPUT' },
         });
       }
- 
+
       const isValidPassword = await user.isCorrectPassword(password);
       if (!isValidPassword) {
         throw new GraphQLError('Incorrect credentials.', {
@@ -44,7 +44,11 @@ export const resolvers = {
         });
       }
 
-      const token = signToken(user);
+      const token = signToken({
+        _id: user._id.toString(),
+        username: user.username,
+        email: user.email,
+      });
       return { token, user };
     },
 
@@ -53,7 +57,11 @@ export const resolvers = {
       args: { username: string; email: string; password: string }
     ) => {
       const user = await User.create(args);
-      const token = signToken(user);
+      const token = signToken({
+        _id: user._id.toString(),
+        username: user.username,
+        email: user.email,
+      });
       return { token, user };
     },
 

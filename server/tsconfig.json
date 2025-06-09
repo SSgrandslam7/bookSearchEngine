@@ -3,8 +3,8 @@
   "compilerOptions": {
     "rootDir": "src",
     "outDir": "dist",
-    "module": "Node16",
-    "moduleResolution": "node16",
+    "module": "Commonjs",
+    "moduleResolution": "node",
     "target": "ES2020",
     "esModuleInterop": true,
     "resolveJsonModule": true,
