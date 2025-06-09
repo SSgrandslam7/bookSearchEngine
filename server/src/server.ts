@@ -8,11 +8,18 @@ import connectDB from './config/connection';
 import { typeDefs } from './schemas/typeDefs';
 import { resolvers } from './schemas/resolvers';
 import { authenticateToken } from './services/auth';
+import cors from 'cors';
+
 
 const PORT = process.env.PORT || 3001;
 
 const startServer = async () => {
   const app = express();
+
+  app.use(cors({
+    origin: ['https://booksearchengine-client.onrender.com', 'http://localhost:5173'],
+    credentials: true,
+  }));
 
   await connectDB();
 
@@ -28,12 +35,9 @@ await server.start();
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
-app.use(
-  '/graphql',
-  expressMiddleware(server, {
-    context: authenticateToken,
-  })
-);
+app.use('/graphql', expressMiddleware(server, {
+  context: async ({ req }) => await authenticateToken({ req }),
+}));
 
 // Serve static files in production
 if (process.env.NODE_ENV === 'production') {
